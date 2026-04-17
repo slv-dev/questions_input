@@ -104,10 +104,12 @@ background: rgba(0,0,0,0.4);
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
 const correctCode = "1234567890";
 const inputsContainer = document.getElementById("inputs");
 
-// создаём 10 инпутов
+// создаём инпуты
 for (let i = 0; i < 10; i++) {
 const input = document.createElement("input");
 
@@ -155,14 +157,17 @@ inputs[paste.length].focus();
 inputsContainer.appendChild(input);
 }
 
-// получить код
+// безопасный фокус
+if (inputsContainer.children.length > 0) {
+inputsContainer.children[0].focus();
+}
+
 function getCode() {
 return Array.from(inputsContainer.children)
 .map(input => input.value)
 .join("");
 }
 
-// проверка
 function checkCode() {
 const code = getCode();
 
@@ -179,19 +184,20 @@ document.getElementById("errorScreen").classList.remove("hidden");
 }
 }
 
-// сброс
-function reset() {
+window.reset = function () {
 document.body.style.background = "#8c8c8c";
 
 document.getElementById("errorScreen").classList.add("hidden");
 document.getElementById("inputScreen").classList.remove("hidden");
 
 Array.from(inputsContainer.children).forEach(input => input.value = "");
+
+if (inputsContainer.children.length > 0) {
 inputsContainer.children[0].focus();
 }
+};
 
-// фокус на первый инпут
-inputsContainer.children[0].focus();
+});
 </script>
 
 </body>
