@@ -15,7 +15,7 @@ height: 100vh;
 display: flex;
 align-items: center;
 justify-content: center;
-background: #f2f2f2;
+background: #8c8c8c; /* серый как на макете */
 transition: background 0.3s ease;
 }
 
@@ -24,25 +24,27 @@ text-align: center;
 }
 
 h1 {
-color: #555;
+color: rgba(0,0,0,0.6);
 margin-bottom: 40px;
-font-size: 48px;
+font-size: 56px;
 }
 
 .code-input {
 display: flex;
-gap: 10px;
+gap: 16px;
 justify-content: center;
 }
 
 .code-input input {
 width: 40px;
 height: 50px;
-font-size: 24px;
+font-size: 28px;
 text-align: center;
 border: none;
-border-bottom: 3px solid #555;
+border-bottom: 4px solid rgba(0,0,0,0.5);
 outline: none;
+background: transparent; /* убрали белый фон */
+color: rgba(0,0,0,0.7);
 }
 
 .hidden {
@@ -50,16 +52,16 @@ display: none;
 }
 
 .result {
-font-size: 64px;
+font-size: 72px;
 font-weight: bold;
-color: rgba(0,0,0,0.5);
+color: rgba(0,0,0,0.6);
 margin-bottom: 30px;
 }
 
 .btn {
 padding: 12px 24px;
 border: none;
-background: rgba(0,0,0,0.2);
+background: rgba(0,0,0,0.25);
 color: white;
 font-size: 16px;
 cursor: pointer;
@@ -68,7 +70,7 @@ transition: 0.2s;
 }
 
 .btn:hover {
-background: rgba(0,0,0,0.3);
+background: rgba(0,0,0,0.4);
 }
 </style>
 </head>
@@ -81,7 +83,6 @@ background: rgba(0,0,0,0.3);
 
 <div class="container hidden" id="successScreen">
 <div class="result">ВЕРНО!</div>
-<button class="btn" onclick="reset()">Попробовать ещё раз</button>
 </div>
 
 <div class="container hidden" id="errorScreen">
@@ -101,7 +102,6 @@ input.pattern = "[0-9]*";
 input.maxLength = 1;
 
 input.addEventListener("input", (e) => {
-// оставляем только цифру
 e.target.value = e.target.value.replace(/\D/g, "");
 
 if (e.target.value && input.nextElementSibling) {
@@ -117,56 +117,8 @@ input.previousElementSibling.focus();
 }
 });
 
-// вставка сразу всего кода
-input.addEventListener("paste", (e) => {
-e.preventDefault();
-const paste = (e.clipboardData || window.clipboardData)
-.getData("text")
-.replace(/\D/g, "")
-.slice(0, 10);
+document.body.style.background = "#8c8c8c";
 
-const inputs = inputsContainer.children;
-
-for (let i = 0; i < paste.length; i++) {
-inputs[i].value = paste[i];
-}
-
-if (paste.length === 10) {
-checkCode();
-} else {
-inputs[paste.length].focus();
-}
-});
-
-inputsContainer.appendChild(input);
-}
-
-function getCode() {
-return Array.from(inputsContainer.children)
-.map(input => input.value)
-.join("");
-}
-
-function checkCode() {
-const code = getCode();
-
-if (code.length === 10) {
-document.getElementById("inputScreen").classList.add("hidden");
-
-if (code === correctCode) {
-document.body.style.background = "#3fa463";
-document.getElementById("successScreen").classList.remove("hidden");
-} else {
-document.body.style.background = "#c44d4d";
-document.getElementById("errorScreen").classList.remove("hidden");
-}
-}
-}
-
-function reset() {
-document.body.style.background = "#f2f2f2";
-
-document.getElementById("successScreen").classList.add("hidden");
 document.getElementById("errorScreen").classList.add("hidden");
 document.getElementById("inputScreen").classList.remove("hidden");
 
