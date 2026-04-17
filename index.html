@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Code Check</title>
+<style>
+* {
+box-sizing: border-box;
+font-family: Arial, sans-serif;
+}
+
+body {
+margin: 0;
+height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+background: #f2f2f2;
+transition: background 0.3s ease;
+}
+
+.container {
+text-align: center;
+}
+
+h1 {
+color: #555;
+margin-bottom: 40px;
+font-size: 48px;
+}
+
+.code-input {
+display: flex;
+gap: 10px;
+justify-content: center;
+}
+
+.code-input input {
+width: 40px;
+height: 50px;
+font-size: 24px;
+text-align: center;
+border: none;
+border-bottom: 3px solid #555;
+outline: none;
+}
+
+.hidden {
+display: none;
+}
+
+.result {
+font-size: 64px;
+font-weight: bold;
+color: rgba(0,0,0,0.5);
+margin-bottom: 30px;
+}
+
+.btn {
+padding: 12px 24px;
+border: none;
+background: rgba(0,0,0,0.2);
+color: white;
+font-size: 16px;
+cursor: pointer;
+border-radius: 6px;
+transition: 0.2s;
+}
+
+.btn:hover {
+background: rgba(0,0,0,0.3);
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="inputScreen">
+<h1>Введите код</h1>
+<div class="code-input" id="inputs"></div>
+</div>
+
+<div class="container hidden" id="successScreen">
+<div class="result">ВЕРНО!</div>
+<button class="btn" onclick="reset()">Попробовать ещё раз</button>
+</div>
+
+<div class="container hidden" id="errorScreen">
+<div class="result">НЕВЕРНО!</div>
+<button class="btn" onclick="reset()">Попробовать ещё раз</button>
+</div>
+
+<script>
+const correctCode = "1234567890";
+const inputsContainer = document.getElementById("inputs");
+
+for (let i = 0; i < 10; i++) {
+const input = document.createElement("input");
+
+input.inputMode = "numeric";
+input.pattern = "[0-9]*";
+input.maxLength = 1;
+
+input.addEventListener("input", (e) => {
+// оставляем только цифру
+e.target.value = e.target.value.replace(/\D/g, "");
+
+if (e.target.value && input.nextElementSibling) {
+input.nextElementSibling.focus();
+}
+
+checkCode();
+});
+
+input.addEventListener("keydown", (e) => {
+if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
+input.previousElementSibling.focus();
+}
+});
+
+// вставка сразу всего кода
+input.addEventListener("paste", (e) => {
+e.preventDefault();
+const paste = (e.clipboardData || window.clipboardData)
+.getData("text")
+.replace(/\D/g, "")
+.slice(0, 10);
+
+const inputs = inputsContainer.children;
+
+for (let i = 0; i < paste.length; i++) {
+inputs[i].value = paste[i];
+}
+
+if (paste.length === 10) {
+checkCode();
+} else {
+inputs[paste.length].focus();
+}
+});
+
+inputsContainer.appendChild(input);
+}
+
+function getCode() {
+return Array.from(inputsContainer.children)
+.map(input => input.value)
+.join("");
+}
+
+function checkCode() {
+const code = getCode();
+
+if (code.length === 10) {
+document.getElementById("inputScreen").classList.add("hidden");
+
+if (code === correctCode) {
+document.body.style.background = "#3fa463";
+document.getElementById("successScreen").classList.remove("hidden");
+} else {
+document.body.style.background = "#c44d4d";
+document.getElementById("errorScreen").classList.remove("hidden");
+}
+}
+}
+
+function reset() {
+document.body.style.background = "#f2f2f2";
+
+document.getElementById("successScreen").classList.add("hidden");
+document.getElementById("errorScreen").classList.add("hidden");
+document.getElementById("inputScreen").classList.remove("hidden");
+
+Array.from(inputsContainer.children).forEach(input => input.value = "");
+inputsContainer.children[0].focus();
+}
+
+inputsContainer.children[0].focus();
+</script>
+
+</body>
+</html>
