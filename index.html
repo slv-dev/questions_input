@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>Code Check</title>
+
 <style>
 * {
 box-sizing: border-box;
@@ -15,7 +16,7 @@ height: 100vh;
 display: flex;
 align-items: center;
 justify-content: center;
-background: #8c8c8c; /* серый как на макете */
+background: #8c8c8c;
 transition: background 0.3s ease;
 }
 
@@ -40,18 +41,21 @@ width: 40px;
 height: 50px;
 font-size: 28px;
 text-align: center;
+
 border: none;
 border-bottom: 4px solid rgba(0,0,0,0.5);
+
+background: transparent;
 outline: none;
-background: transparent; /* убрали белый фон */
+
 color: rgba(0,0,0,0.8);
 caret-color: rgba(0,0,0,0.8);
+
 appearance: none;
 -webkit-appearance: none;
 }
 
 .code-input input:focus {
-outline: none;
 border-bottom: 4px solid rgba(0,0,0,0.9);
 }
 
@@ -82,6 +86,7 @@ background: rgba(0,0,0,0.4);
 }
 </style>
 </head>
+
 <body>
 
 <div class="container" id="inputScreen">
@@ -98,10 +103,11 @@ background: rgba(0,0,0,0.4);
 <button class="btn" onclick="reset()">Попробовать ещё раз</button>
 </div>
 
-<script defer>
+<script>
 const correctCode = "1234567890";
 const inputsContainer = document.getElementById("inputs");
 
+// создаём 10 инпутов
 for (let i = 0; i < 10; i++) {
 const input = document.createElement("input");
 
@@ -125,6 +131,56 @@ input.previousElementSibling.focus();
 }
 });
 
+input.addEventListener("paste", (e) => {
+e.preventDefault();
+
+const paste = (e.clipboardData || window.clipboardData)
+.getData("text")
+.replace(/\D/g, "")
+.slice(0, 10);
+
+const inputs = inputsContainer.children;
+
+for (let i = 0; i < paste.length; i++) {
+inputs[i].value = paste[i];
+}
+
+if (paste.length === 10) {
+checkCode();
+} else {
+inputs[paste.length].focus();
+}
+});
+
+inputsContainer.appendChild(input);
+}
+
+// получить код
+function getCode() {
+return Array.from(inputsContainer.children)
+.map(input => input.value)
+.join("");
+}
+
+// проверка
+function checkCode() {
+const code = getCode();
+
+if (code.length === 10) {
+document.getElementById("inputScreen").classList.add("hidden");
+
+if (code === correctCode) {
+document.body.style.background = "#3fa463";
+document.getElementById("successScreen").classList.remove("hidden");
+} else {
+document.body.style.background = "#c44d4d";
+document.getElementById("errorScreen").classList.remove("hidden");
+}
+}
+}
+
+// сброс
+function reset() {
 document.body.style.background = "#8c8c8c";
 
 document.getElementById("errorScreen").classList.add("hidden");
@@ -134,6 +190,7 @@ Array.from(inputsContainer.children).forEach(input => input.value = "");
 inputsContainer.children[0].focus();
 }
 
+// фокус на первый инпут
 inputsContainer.children[0].focus();
 </script>
 
